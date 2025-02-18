@@ -1,0 +1,25 @@
+[Unit]
+Description=PostgreSQL container definition
+Wants=network-online.target
+After=podman.socket
+
+[Container]
+Image=docker.io/bitnami/postgresql:latest
+Network=internal-network
+ContainerName=postgresql-server
+Volume=postgresql-data:/bitnami/postgresql
+User=1010:0
+Environment=POSTGRESQL_PASSWORD=123456
+GlobalArgs=--log-level=debug
+HealthCmd=/opt/bitnami/postgresql/bin/pg_isready -U postgres
+HealthInterval=30s
+HealthRetries=3
+HealthStartPeriod=1m
+
+[Service]
+Restart=on-failure
+TimeoutStartSec=300
+
+[Install]
+WantedBy=default.target
+

@@ -1,0 +1,5 @@
+[Volume]
+Copy=false
+User=1010
+Group=0
+VolumeName=postgresql-data

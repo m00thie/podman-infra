@@ -1,0 +1,7 @@
+[Network]
+Driver=bridge
+Gateway=10.52.0.1
+Subnet=10.52.0.0/20
+Internal=true
+NetworkName=internal-network
+
