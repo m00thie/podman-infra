@@ -1,0 +1,41 @@
+[Unit]
+Description=N8N worker container definition
+Wants=network-online.target
+After=podman.socket postgresql.service redis.service n8n.service
+Requires=postgresql.service redis.service n8n.service
+
+[Container]
+Image=docker.io/n8nio/n8n:latest
+AutoUpdate=registry
+Network=internal-network
+Network=internet-network
+ContainerName=n8n-worker
+Volume=n8n-worker-data:/home/node/.n8n
+User=1000:1000
+Environment=DB_TYPE=postgresdb
+Environment=DB_POSTGRESDB_DATABASE=n8n
+Environment=DB_POSTGRESDB_HOST=postgresql-server
+Environment=DB_POSTGRESDB_PORT=5432
+Environment=DB_POSTGRESDB_SCHEMA=n8n
+Environment=EXECUTIONS_MODE=queue
+Environment=QUEUE_BULL_REDIS_HOST=redis-server
+Environment=QUEUE_BULL_REDIS_PORT=6379
+Environment=QUEUE_BULL_PREFIX=n8nq_
+Environment=QUEUE_BULL_REDIS_DB=1
+Environment=N8N_LOG_LEVEL=info
+Environment=WEBHOOK_URL=https://n8n.it/
+Secret=N8N_POSTGRES_USERNAME,type=env,target=DB_POSTGRESDB_USER
+Secret=N8N_POSTGRES_PASSWORD,type=env,target=DB_POSTGRESDB_PASSWORD
+Secret=N8N_REDIS_USERNAME,type=env,target=QUEUE_BULL_REDIS_USERNAME
+Secret=N8N_REDIS_PASSWORD,type=env,target=QUEUE_BULL_REDIS_PASSWORD
+Secret=N8N_ENCRYPTION_KEY,type=env,target=N8N_ENCRYPTION_KEY
+Label='traefik.enable=false'
+Exec=worker
+
+[Service]
+Restart=on-failure
+TimeoutStartSec=300
+
+[Install]
+WantedBy=default.target
+

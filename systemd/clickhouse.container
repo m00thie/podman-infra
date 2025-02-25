@@ -1,0 +1,23 @@
+[Unit]
+Description=ClickHouse container definition
+Wants=network-online.target
+After=podman.socket
+
+[Container]
+Image=docker.io/bitnami/clickhouse:latest
+AutoUpdate=registry
+Network=internal-network
+ContainerName=clickhouse-server
+Volume=clickhouse-data:/bitnami/clickhouse
+User=1001:0
+Environment=CLICKHOUSE_ADMIN_USER=test
+Environment=CLICKHOUSE_ADMIN_PASSWORD=test
+Label="traefik.enable=false"
+
+[Service]
+Restart=on-failure
+TimeoutStartSec=300
+
+[Install]
+WantedBy=default.target
+

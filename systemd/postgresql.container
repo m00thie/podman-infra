@@ -1,0 +1,22 @@
+[Unit]
+Description=PostgreSQL container definition
+Wants=network-online.target
+After=podman.socket
+
+[Container]
+Image=docker.io/bitnami/postgresql:latest
+AutoUpdate=registry
+Network=internal-network
+ContainerName=postgresql-server
+Volume=postgresql-data:/bitnami/postgresql
+User=1010:0
+Environment=POSTGRESQL_PASSWORD=123456
+Label="traefik.enable=false"
+
+[Service]
+Restart=on-failure
+TimeoutStartSec=300
+
+[Install]
+WantedBy=default.target
+

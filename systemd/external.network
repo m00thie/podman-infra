@@ -1,0 +1,5 @@
+[Network]
+Driver=bridge
+Gateway=10.54.0.1
+Subnet=10.54.0.0/20
+NetworkName=internet-network

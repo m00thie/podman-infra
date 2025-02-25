@@ -1,0 +1,22 @@
+[Unit]
+Description=Redis server container definition
+Wants=network-online.target
+After=podman.socket
+
+[Container]
+Image=docker.io/redis/redis-stack-server:latest
+AutoUpdate=registry
+Network=internal-network
+Label="traefik.enable=false"
+ContainerName=redis-server
+Volume=redis-data:/data
+Volume=/opt/redis/conf/redis.conf:/redis-stack.conf
+User=0:0
+
+[Service]
+Restart=on-failure
+TimeoutStartSec=300
+
+[Install]
+WantedBy=default.target
+
