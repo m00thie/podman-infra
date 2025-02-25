@@ -1,0 +1,32 @@
+[Unit]
+Description=Traefik container definition
+Wants=network-online.target podman.socket
+After=podman.socket
+
+[Container]
+Image=docker.io/library/traefik:latest
+AutoUpdate=registry
+Network=internal-network
+Network=internet-network
+ContainerName=traefik
+PublishPort=80:80
+PublishPort=443:443
+PublishPort=8080:8080
+Volume=/var/run/podman/podman.sock:/var/run/docker.sock
+Volume=traefik-data:/etc/traefik
+Label='traefik.enable=true'
+Label='traefik.http.routers.traefik.rule=Host(`traefik.it`)'
+Label='traefik.docker.network=internal-network'
+Label='traefik.http.services.traefik.loadbalancer.server.port=8080'
+Label='traefik.http.routers.traefik.entrypoints=websecure'
+Label='traefik.http.routers.traefik.tls.certresolver=le'
+Label='traefik.http.middlewares.traefik-https.redirectscheme.scheme=https'
+Exec=--api.insecure=true --providers.docker=true --entrypoints.web.address=:80 --entrypoints.websecure.address=:443 --certificatesresolvers.le.acme.tlschallenge=true --providers.file.directory=/etc/traefik/dynamic 
+
+[Service]
+Restart=on-failure
+TimeoutStartSec=300
+
+[Install]
+WantedBy=default.target
+

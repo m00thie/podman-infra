@@ -1,0 +1,7 @@
+[Volume]
+VolumeName=minio-data
+Type=cifs
+Device=//192.168.88.250/minio_store
+Options=credentials=/etc/cifs/.minio_smbcredentials,uid=0,gid=0,vers=3.11,rw,soft
+User=0
+Group=0

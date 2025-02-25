@@ -1,0 +1,5 @@
+[Volume]
+User=0
+Group=0
+VolumeName=redis-data
+

@@ -1,0 +1,36 @@
+[Unit]
+Description=Minio service container definition
+Wants=network-online.target
+After=podman.socket nas-mount.service
+Requires=nas-mount.service
+ConditionPathExists=/etc/cifs/.minio_smbcredentials
+
+[Container]
+Image=quay.io/minio/minio:latest
+AutoUpdate=registry
+Network=internal-network
+Network=internet-network
+ContainerName=minio-service
+PublishPort=9001:9001
+Volume=minio-data:/data
+User=0:0
+Environment=MINIO_BROWSER_REDIRECT_URL=https://minio.it
+Secret=MINIO_USERNAME,type=env,target=MINIO_ROOT_USER
+Secret=MINIO_PASSWORD,type=env,target=MINIO_ROOT_PASSWORD
+Label='traefik.enable=true'
+Label='traefik.http.routers.minio-service.rule=Host(`minio.it`)'
+Label='traefik.http.services.minio-service.loadbalancer.server.port=9001'
+Label='traefik.docker.network=internal-network'
+Label='traefik.http.routers.minio-service.entrypoints=websecure'
+Label='traefik.http.routers.minio-service.tls.certresolver=le'
+Label='traefik.http.middlewares.minio-https.redirectscheme.scheme=https'
+Exec=server /data --console-address ":9001"
+
+[Service]
+Restart=on-failure
+RestartSec=30s
+TimeoutStartSec=300
+
+[Install]
+WantedBy=default.target
+
